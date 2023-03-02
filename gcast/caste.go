@@ -1267,14 +1267,15 @@ func ToSliceE(i interface{}) ([]interface{}, error) {
 		}
 		return s, nil
 	default:
-		switch v := reflect.ValueOf(indirect(i)); v.Kind() {
-		case reflect.Slice, reflect.Array:
-			var ans []any
-			for i := 0; i < v.Len(); i++ {
-				ans = append(ans, v.Index(i).Interface())
-			}
-			return ans, nil
-		}
+		///> todo any
+		//switch v := reflect.ValueOf(indirect(i)); v.Kind() {
+		//case reflect.Slice, reflect.Array:
+		//	var ans []any
+		//	for i := 0; i < v.Len(); i++ {
+		//		ans = append(ans, v.Index(i).Interface())
+		//	}
+		//	return ans, nil
+		//}
 		return s, fmt.Errorf("unable to cast %#v of type %T to []interface{}", i, i)
 	}
 }
