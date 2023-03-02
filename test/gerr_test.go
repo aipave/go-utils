@@ -1,4 +1,4 @@
-package gtest
+package test
 
 import (
 	"testing"
