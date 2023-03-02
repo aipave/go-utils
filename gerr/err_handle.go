@@ -13,7 +13,7 @@ type Warn struct {
     mode string
 }
 
-func NewErrInst(code int32, msg string) error {
+func New(code int32, msg string) error {
     return &Err{
         code: code,
         msg:  msg,
@@ -42,7 +42,7 @@ func Append(err, appendErr error) error {
     if e, ok := err.(*Err); ok {
         return e.Append(appendErr)
     }
-    return NewErrInst(DefaultErrCode, err.Error()+"; "+appendErr.Error())
+    return New(DefaultErrCode, err.Error()+"; "+appendErr.Error())
 }
 
 func (e *Err) Error() string {
