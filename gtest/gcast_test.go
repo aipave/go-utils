@@ -1,12 +1,12 @@
 package gtest
 
 import (
-	"testing"
+    "testing"
 
-	"github.com/alyu01/go-utils/gcast"
-	_ "github.com/spf13/cast"
+    _ "github.com/alyu01/go-utils/gcast"
+    "github.com/spf13/cast"
 )
 
 func TestGcast(t *testing.T) {
-	t.Log(gcast.CastToString(""))
+    t.Log(cast.CastToString(""))
 }
