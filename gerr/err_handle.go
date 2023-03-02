@@ -46,7 +46,7 @@ func Append(err, appendErr error) error {
 }
 
 func (e *Err) Error() string {
-    return fmt.Sprint("code: %v, msg: %v", e.Code(), e.Msg())
+    return fmt.Sprintf("code: %v, msg: %v", e.Code(), e.Msg())
 }
 
 func (e *Err) Code() int32 {
