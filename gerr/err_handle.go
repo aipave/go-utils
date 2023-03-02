@@ -23,7 +23,7 @@ func NewErrInst(code int32, msg string) error {
 
 func Msg(err error) string {
     if err == nil {
-        return SuccessPrompt
+        return SuccessMsg
     }
     if e, ok := err.(*Err); ok {
         return e.Msg()
