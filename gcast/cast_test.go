@@ -71,7 +71,7 @@ func createNumberTestSteps(zero, one, eight, eightnegative, eightpoint31, eightp
         {jeight, eight, false},
         {jminuseight, eightnegative, isUint},
         {jfloateight, eight, false},
-        {"test", zero, true},
+        {"test-example", zero, true},
         {testing.T{}, zero, true},
     }
 }
@@ -91,7 +91,7 @@ func runNumberTest(c *qt.C, tests []testStep, tove func(interface{}) (interface{
         c.Assert(err, qt.IsNil, errmsg)
         c.Assert(v, qt.Equals, test.expect, errmsg)
 
-        // Non-E test:
+        // Non-E test-example:
         v = tov(test.input)
         c.Assert(v, qt.Equals, test.expect, errmsg)
     }
@@ -283,7 +283,7 @@ func TestToStringE(t *testing.T) {
         c.Assert(err, qt.IsNil, errmsg)
         c.Assert(v, qt.Equals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToString(test.input)
         c.Assert(v, qt.Equals, test.expect, errmsg)
     }
@@ -392,7 +392,7 @@ func TestStringMapStringSliceE(t *testing.T) {
         c.Assert(err, qt.IsNil, errmsg)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToStringMapStringSlice(test.input)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
     }
@@ -429,7 +429,7 @@ func TestToStringMapE(t *testing.T) {
         c.Assert(err, qt.IsNil, errmsg)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToStringMap(test.input)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
     }
@@ -466,7 +466,7 @@ func TestToStringMapBoolE(t *testing.T) {
         c.Assert(err, qt.IsNil, errmsg)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToStringMapBool(test.input)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
     }
@@ -506,7 +506,7 @@ func TestToStringMapIntE(t *testing.T) {
         c.Assert(err, qt.IsNil, errmsg)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToStringMapInt(test.input)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
     }
@@ -547,7 +547,7 @@ func TestToStringMapInt64E(t *testing.T) {
         c.Assert(err, qt.IsNil)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToStringMapInt64(test.input)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
     }
@@ -594,7 +594,7 @@ func TestToStringMapStringE(t *testing.T) {
         c.Assert(err, qt.IsNil)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToStringMapString(test.input)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
     }
@@ -630,7 +630,7 @@ func TestToBoolSliceE(t *testing.T) {
         c.Assert(err, qt.IsNil)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToBoolSlice(test.input)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
     }
@@ -666,7 +666,7 @@ func TestToIntSliceE(t *testing.T) {
         c.Assert(err, qt.IsNil)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToIntSlice(test.input)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
     }
@@ -699,7 +699,7 @@ func TestToSliceE(t *testing.T) {
         c.Assert(err, qt.IsNil)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToSlice(test.input)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
     }
@@ -740,7 +740,7 @@ func TestToStringSliceE(t *testing.T) {
         c.Assert(err, qt.IsNil)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToStringSlice(test.input)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
     }
@@ -777,7 +777,7 @@ func TestToDurationSliceE(t *testing.T) {
         c.Assert(err, qt.IsNil)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToDurationSlice(test.input)
         c.Assert(v, qt.DeepEquals, test.expect, errmsg)
     }
@@ -817,7 +817,7 @@ func TestToBoolE(t *testing.T) {
         {-1, true, false},
 
         // errors
-        {"test", false, true},
+        {"test-example", false, true},
         {testing.T{}, false, true},
     }
 
@@ -833,7 +833,7 @@ func TestToBoolE(t *testing.T) {
         c.Assert(err, qt.IsNil)
         c.Assert(v, qt.Equals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToBool(test.input)
         c.Assert(v, qt.Equals, test.expect, errmsg)
     }
@@ -945,7 +945,7 @@ func TestToTime(t *testing.T) {
         c.Assert(err, qt.IsNil)
         c.Assert(v.UTC(), qt.Equals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToTime(test.input)
         c.Assert(v.UTC(), qt.Equals, test.expect, errmsg)
     }
@@ -986,7 +986,7 @@ func TestToDurationE(t *testing.T) {
         {string("5m"), time.Minute * td, false},
         {string("5h"), time.Hour * td, false},
         // errors
-        {"test", 0, true},
+        {"test-example", 0, true},
         {testing.T{}, 0, true},
     }
 
@@ -1002,7 +1002,7 @@ func TestToDurationE(t *testing.T) {
         c.Assert(err, qt.IsNil)
         c.Assert(v, qt.Equals, test.expect, errmsg)
 
-        // Non-E test
+        // Non-E test-example
         v = ToDuration(test.input)
         c.Assert(v, qt.Equals, test.expect, errmsg)
     }

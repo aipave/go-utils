@@ -1,4 +1,4 @@
-package test
+package test_example
 
 import (
     "context"
@@ -82,7 +82,7 @@ func TestGracefulTimeCrontab(t *testing.T) {
 //}
 //var dao *Dao
 //
-//func test() {
+//func test-example() {
 //    dao = &Dao{
 //        closeChan: make(chan struct{}),
 //    }

@@ -1,9 +1,9 @@
-package test
+package test_example
 
 import (
     "testing"
 
-    gcast "github.com/alyu01/go-utils/gcast"
+    "github.com/alyu01/go-utils/gcast"
     "github.com/alyu01/go-utils/gtoken"
 )
 
