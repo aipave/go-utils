@@ -1,6 +1,6 @@
 module github.com/alyu01/go-utils
 
-go 1.19
+go 1.18
 
 require (
 	github.com/RussellLuo/timingwheel v0.0.0-20220218152713-54845bda3108
