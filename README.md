@@ -8,12 +8,12 @@ common components
 - [x] gracexit test
 - [x] gtime test
 - [x] gtoken test
-- [ ] galert test
+- [x] galert test
+- [x] gslice test
 - [ ] gerr test
 - [ ] gnet test
 - [ ] grpclient test
 - [ ] gqpst test
-- [ ] gslice test
 - [ ] xxxxxxxx test
 - 
 - [ ] gcfg test

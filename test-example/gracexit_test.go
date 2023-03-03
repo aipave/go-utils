@@ -30,7 +30,7 @@ func (t *Test) handleFoo(ctx context.Context) {
 
 // received term signal, process will exit after 3 seconds
 func (t *Test) testGraceExitNoBreakLoop() {
-    ctx, cancel := context.SetCancel(context.Background())
+    ctx, cancel := context.WithCancel(context.Background())
 
     go t.handleFoo(ctx)
 
@@ -44,7 +44,7 @@ func sayHello(t *testing.T) {
 
 func testGraceExitAddBreakLoop(t *testing.T) {
     timeTick := time.Tick(3 * time.Second)
-    ctx, cancel := context.SetCancel(context.Background())
+    ctx, cancel := context.WithCancel(context.Background())
     gracexit.Close(cancel)
 
     ///> add loop, break loop

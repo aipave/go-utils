@@ -9,7 +9,7 @@ type Err struct {
     msg  string
 }
 
-type Warn struct {
+type Handle struct {
     mode string
 }
 
