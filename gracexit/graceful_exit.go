@@ -1,13 +1,13 @@
 package gracexit
 
 import (
-	"fmt"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
+    "fmt"
+    "os"
+    "os/signal"
+    "syscall"
+    "time"
 
-	"github.com/sirupsen/logrus"
+    "github.com/sirupsen/logrus"
 )
 
 var sig = make(chan os.Signal, 1)
@@ -16,53 +16,53 @@ var releaseHandlers []func()
 var closeHandlers []func()
 
 func init() {
-	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+    signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 
-	go wait()
+    go wait()
 }
 
 // Close
 func Close(handler func()) {
-	closeHandlers = append(closeHandlers, handler)
+    closeHandlers = append(closeHandlers, handler)
 }
 
 // Release
 func Release(handler func()) {
-	releaseHandlers = append(releaseHandlers, handler)
+    releaseHandlers = append(releaseHandlers, handler)
 }
 
 // Wait
 func Wait() {
-	<-blockChan
+    <-blockChan
 }
 
 func wait() {
-	defer func() {
-		if err := recover(); err != nil {
-			fmt.Println(err)
-		}
-	}()
+    defer func() {
+        if err := recover(); err != nil {
+            fmt.Println(err)
+        }
+    }()
 
-	select {
-	case <-sig:
-		for _, handler := range closeHandlers {
-			if handler != nil {
-				handler() // close all
-			}
-		}
-	}
+    select {
+    case <-sig:
+        for _, handler := range closeHandlers {
+            if handler != nil {
+                handler() // close all
+            }
+        }
+    }
 
-	// exit
-	logrus.Infof("received term signal, process will exit after 3 seconds\n")
+    // exit
+    logrus.Infof("received term signal, process will exit after 3 seconds\n")
 
-	time.Sleep(3 * time.Second)
+    time.Sleep(3 * time.Second)
 
-	for _, handler := range releaseHandlers {
-		if handler != nil {
-			handler() // release all
-		}
-	}
+    for _, handler := range releaseHandlers {
+        if handler != nil {
+            handler() // release all
+        }
+    }
 
-	blockChan <- 0
-	os.Exit(0)
+    blockChan <- 0
+    os.Exit(0)
 }

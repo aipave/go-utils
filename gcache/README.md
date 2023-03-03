@@ -2,12 +2,12 @@
 
 [![BK Pipelines Status](https://api.bkdevops.qq.com/process/api/external/pipelines/projects/pcgtrpcproject/p-c9b0d4b7b7754407ae09b4c8887a0ba6/badge?X-DEVOPS-PROJECT-ID=pcgtrpcproject)](http://devops.oa.com:/ms/process/api-html/user/builds/projects/pcgtrpcproject/pipelines/p-c9b0d4b7b7754407ae09b4c8887a0ba6/latestFinished?X-DEVOPS-PROJECT-ID=pcgtrpcproject)[![Coverage](https://tcoverage.woa.com/api/getCoverage/getTotalImg/?pipeline_id=p-c9b0d4b7b7754407ae09b4c8887a0ba6)](http://macaron.oa.com/api/coverage/getTotalLink/?pipeline_id=p-c9b0d4b7b7754407ae09b4c8887a0ba6)[![GoDoc](https://img.shields.io/badge/API%20Docs-GoDoc-green)](http://godoc.oa.com/git.code.oa.com/trpc-go/trpc-database/cos)
 
-localcache is a local K-V caching component that runs on a single machine. 
+localcache is a local K-V caching component that runs on a single machine.
 It allows concurrent access by multiple goroutines and supports LRU-based and expiration-based eviction policies.
-When the localcache capacity reaches its limit, data eviction is performed based on LRU, and expired key-value pairs are deleted using a time wheel implementation.
+When the localcache capacity reaches its limit, data eviction is performed based on LRU, and expired key-value pairs are
+deleted using a time wheel implementation.
 
 ## how to use
-
 
 ```go
 package main
@@ -62,7 +62,8 @@ will del tail elem. when to max, default value is 1e30
 type LoadFunc func(ctx context.Context, key string) (interface{}, error)
 ```
 
-Set the data load function, the key does not exist in the cache, use this function to load the corresponding value, and cached in the cache.
+Set the data load function, the key does not exist in the cache, use this function to load the corresponding value, and
+cached in the cache.
 
 #### Cache interface
 
