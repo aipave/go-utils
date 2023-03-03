@@ -28,3 +28,12 @@ const (
     Week        = 7 * Day
     Year        = 365 * Day
 )
+
+const (
+    IMinute int64 = 60
+    IHour   int64 = 60 * IMinute
+    IDay    int64 = 24 * IHour
+    IWeek   int64 = 7 * IDay
+    IMonth  int64 = 30 * IDay
+    IYear         = 365 * IDay
+)

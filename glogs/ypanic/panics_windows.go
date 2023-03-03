@@ -2,7 +2,7 @@
 
 package ypanic
 
-// Redirect 重定向panic日志
+// Redirect
 func Redirect(filename string) {
 
 }

@@ -16,6 +16,7 @@ import (
     "time"
 
     "github.com/alyu01/go-utils/gracexit"
+    "github.com/alyu01/go-utils/gtime"
     "github.com/fsnotify/fsnotify"
     "github.com/sirupsen/logrus"
 )
@@ -23,7 +24,7 @@ import (
 var once sync.Once
 var offset int64
 
-// Redirect 重定向panic日志
+// Redirect
 func Redirect(filename string) {
     once.Do(func() {
         f, err := os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm)
@@ -31,7 +32,7 @@ func Redirect(filename string) {
             panic(err)
         }
 
-        _ = syscall.Dup2(int(f.Fd()), int(os.Stderr.Fd())) // 重定向到panic文件
+        _ = syscall.Dup2(int(f.Fd()), int(os.Stderr.Fd())) // Redirect to panic file
 
         // read last block
         var data []byte
@@ -46,7 +47,7 @@ func Redirect(filename string) {
         offset = int64(len(data))
 
         // set current block begin
-        _, _ = fmt.Fprintf(f, "progress started at: ---------%v-----------\n", time.Now().Format("2006-01-02 15:04:06"))
+        _, _ = fmt.Fprintf(f, "progress started at: ---------%v-----------\n", time.Now().Format(gtime.FormatDefault))
 
         go watch(filename, f)
     })
@@ -93,7 +94,7 @@ func watch(filename string, f *os.File) {
     }
 }
 
-var silentMap = make(map[string]bool) // 静默策略
+var silentMap = make(map[string]bool) // silence policy
 
 func filter(buf []byte) {
     var matched bool

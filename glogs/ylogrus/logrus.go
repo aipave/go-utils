@@ -8,6 +8,7 @@ import (
     "sync"
     "time"
 
+    "github.com/alyu01/go-utils/gtime"
     "github.com/natefinch/lumberjack"
 
     "github.com/alyu01/go-utils/ginfos"
@@ -32,7 +33,7 @@ func shortPathCallerFormatter(frame *runtime.Frame) string {
 var once sync.Once
 
 var defaultFormatter = &nested.Formatter{
-    TimestampFormat:       "2006-01-02 15:04:05.000",
+    TimestampFormat:       gtime.FormatDefaultMill,
     ShowFullLevel:         true,
     CallerFirst:           true,
     CustomCallerFormatter: fullPathCallerFormatter,
@@ -54,9 +55,9 @@ func Init(opts ...LogOption) {
 
         logrus.SetOutput(ylogrotate.NewWriter(&lumberjack.Logger{
             Filename:   "log/" + ginfos.Runtime.Exec() + ".log",
-            MaxSize:    200, // 单个文件最大200M
-            MaxAge:     30,  // 最长30天
-            MaxBackups: 300, // 最大300个文件
+            MaxSize:    256, // 256M
+            MaxAge:     30,  // 30d
+            MaxBackups: 300, // max 300 files
             LocalTime:  true,
             Compress:   true,
         }))
@@ -70,9 +71,9 @@ func Init(opts ...LogOption) {
     if len(cfg.filename) > 0 {
         logrus.SetOutput(ylogrotate.NewWriter(&lumberjack.Logger{
             Filename:   cfg.filename,
-            MaxSize:    200, // 单个文件最大200M
-            MaxAge:     30,  // 最长30天
-            MaxBackups: 300, // 最大300个文件
+            MaxSize:    256, // 256M
+            MaxAge:     30,  // 30day
+            MaxBackups: 300, // max 300files
             LocalTime:  true,
             Compress:   true,
         }))

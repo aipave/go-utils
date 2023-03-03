@@ -18,8 +18,8 @@ const dailyFormat = gtime.FormatDate
 
 var fileMap = smap.NewMap[string, int64](options.WithLocker())
 
-// NewDailyLog 新增单独的日志文件
-// yNewDailyLog("svip.log", ylogrus.WithMaxAge(30)) 保留30天日志
+// NewDailyLog
+// yNewDailyLog("svip.log", ylogrus.WithMaxAge(30)) 
 func NewDailyLog(filename string, opts ...LogOption) *logrus.Logger {
     var c = config{maxAge: 60}
     for _, fn := range opts {
@@ -30,7 +30,7 @@ func NewDailyLog(filename string, opts ...LogOption) *logrus.Logger {
 
     l.SetReportCaller(true)
     l.SetFormatter(&nested.Formatter{
-        TimestampFormat: "2006-01-02 15:04:05",
+        TimestampFormat: gtime.FormatDefault,
         ShowFullLevel:   true,
         CallerFirst:     true,
         CustomCallerFormatter: func(frame *runtime.Frame) string {
@@ -53,8 +53,8 @@ func clean() {
     for range ticker.C {
         fileMap.Range(func(filename string, maxAge int64) bool {
             for {
-                date := time.Now().Add(-time.Duration(maxAge+1) * 86400 * time.Second).Format("2006-01-02") // 2022-11-11
-                targetFile := fmt.Sprintf("%v-%v", filename, date)                                          // svip.log-2022-11-11
+                date := time.Now().Add(-time.Duration(maxAge+1) * 86400 * time.Second).Format(gtime.FormatDate) // 2022-11-11
+                targetFile := fmt.Sprintf("%v-%v", filename, date)                                              // svip.log-2022-11-11
 
                 _, err := os.Stat(targetFile)
                 if os.IsNotExist(err) {

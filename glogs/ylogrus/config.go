@@ -24,21 +24,21 @@ func WithLumLogger(lum *lumberjack.Logger) LogOption {
 	}
 }
 
-// WithLogLevel 设置日志级别
+// WithLogLevel
 func WithLogLevel(level logrus.Level) LogOption {
 	return func(c *config) {
 		c.logLevel = &level
 	}
 }
 
-// WithReportCaller 打印调用者
+// WithReportCaller
 func WithReportCaller(v bool) LogOption {
 	return func(c *config) {
 		c.reportCaller = &v
 	}
 }
 
-// WithFormatter 设置日志格式
+// WithFormatter
 func WithFormatter(format logrus.Formatter) LogOption {
 	return func(c *config) {
 		c.formatter = format
@@ -51,7 +51,8 @@ func WithHooks(hook ...logrus.Hook) LogOption {
 	}
 }
 
-// WithMaxAge 设置日志最长存储天数
+// WithMaxAge function specifies the maximum length of time is the log file storage,
+// rather than the biggest number of log files.
 func WithMaxAge(days int64) LogOption {
 	return func(c *config) {
 		c.maxAge = days

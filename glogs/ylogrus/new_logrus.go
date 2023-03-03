@@ -1,12 +1,12 @@
 package ylogrus
 
 import (
-	"github.com/alyu01/go-utils/glogs/ylogrotate"
-	"github.com/natefinch/lumberjack"
-	"github.com/sirupsen/logrus"
+    "github.com/alyu01/go-utils/glogs/ylogrotate"
+    "github.com/natefinch/lumberjack"
+    "github.com/sirupsen/logrus"
 )
 
-// NewLogger 创建单独日志文件
+// NewLogger
 func NewLogger(opts ...LogOption) (l *logrus.Logger) {
     var c config
     for _, fn := range opts {
@@ -20,9 +20,9 @@ func NewLogger(opts ...LogOption) (l *logrus.Logger) {
     l.SetFormatter(defaultFormatter)
     l.SetOutput(ylogrotate.NewWriter(&lumberjack.Logger{
         Filename:   c.filename,
-        MaxSize:    200, // 单个文件最大200M
-        MaxAge:     30,  // 最长30天
-        MaxBackups: 300, // 最大300个文件
+        MaxSize:    256, // 256M
+        MaxAge:     30,  //
+        MaxBackups: 300, //
         LocalTime:  true,
         Compress:   true,
     }))

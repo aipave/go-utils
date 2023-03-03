@@ -44,7 +44,7 @@ func GetWriter(filename string) *lumberjack.Logger {
     // init
     logger := &lumberjack.Logger{
         Filename:   filename,
-        MaxSize:    200, // max 200M
+        MaxSize:    256, // max 256M
         MaxAge:     30,  // max 30day
         MaxBackups: 30,  // max files
         Compress:   true,

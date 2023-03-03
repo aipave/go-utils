@@ -4,7 +4,7 @@ import (
     "bytes"
     "encoding/json"
     "fmt"
-    "io/ioutil"
+    "io"
     "net/http"
     "strings"
 
@@ -12,7 +12,6 @@ import (
     "github.com/sirupsen/logrus"
 )
 
-// https://open.feishu.cn/tool/cardbuilder?lang=zh-CN
 // https://open.feishu.cn/document/ukTMukTMukTM/uEjNwUjLxYDM14SM2ATN
 
 type card struct {
@@ -83,7 +82,7 @@ func triggerAlert(card interface{}) {
     defer resp.Body.Close()
 
     var data []byte
-    data, err = ioutil.ReadAll(resp.Body)
+    data, err = io.ReadAll(resp.Body) ///< ioutil.ReadAll deprecated
     if err != nil {
         logrus.Errorf("read body err:%v\n", err)
         return
