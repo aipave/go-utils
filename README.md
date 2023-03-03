@@ -2,6 +2,18 @@
 
 common components
 
+## Todo
+- [x] gcache test
+- [x] gcast test
+- [ ] gcfg test
+- [ ] gemail test
+- [ ] gerr test
+- [ ] ginfos test
+- [x] gracexit test
+- [x] gtime test
+- [x] gtoken test
+- [ ] gzip test
+
 ## Tips
 ### go mod
 /go-utils/go.mod is needed, or it will be default version go1.16
