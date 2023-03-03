@@ -10,7 +10,7 @@ import (
 )
 
 func TestGwarn(t *testing.T) {
-    url := "https://open.feishu.cn/open-apis/bot/v2/hook/2f1dc72c-8d2d-4641-bd95-31bbd6fcd2c7"
+    url := "https://open.feishu.cn/open-apis/bot/v2/hook/xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
 
     titleN := "Notice Topic"
     // theSetShowIpOnTheRealMachineIsValid
