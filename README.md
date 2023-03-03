@@ -10,7 +10,7 @@ common components
 - [x] gtoken test
 - [x] galert test
 - [x] gslice test
-- [ ] gerr test
+- [x] gerr test
 - [ ] gnet test
 - [ ] grpclient test
 - [ ] gqpst test
