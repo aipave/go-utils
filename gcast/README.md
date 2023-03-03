@@ -1,5 +1,3 @@
-# gcast
+# cast
 
-## for datatypecast 
-
-from https://github.com/spf13/cast
+Mirror from: https://github.com/spf13/cast
