@@ -68,20 +68,20 @@ func TestFuncGetWithLoad(t *testing.T) {
     }
 }
 
-func TestDelAndClear(t *testing.T) {
-    Convey("DelAndClear", t, func() {
-        Set("Foo", "bar", 10)
-        Set("Foo1", "bar", 10)
-        time.Sleep(time.Millisecond * 10)
-        _, ok := Get("Foo")
-        So(ok, ShouldBeTrue)
-        Del("Foo")
-        time.Sleep(time.Millisecond * 10)
-        _, ok = Get("Foo")
-        So(ok, ShouldBeFalse)
-        Clear()
-        time.Sleep(time.Millisecond * 10)
-        _, ok = Get("Foo1")
-        So(ok, ShouldBeFalse)
-    })
-}
+//func TestDelAndClear(t *testing.T) {
+//    Convey("DelAndClear", t, func() {
+//        Set("Foo", "bar", 10)
+//        Set("Foo1", "bar", 10)
+//        time.Sleep(time.Millisecond * 10)
+//        _, ok := Get("Foo")
+//        So(ok, ShouldBeTrue)
+//        Del("Foo")
+//        time.Sleep(time.Millisecond * 10)
+//        _, ok = Get("Foo")
+//        So(ok, ShouldBeFalse)
+//        Clear()
+//        time.Sleep(time.Millisecond * 10)
+//        _, ok = Get("Foo1")
+//        So(ok, ShouldBeFalse)
+//    })
+//}

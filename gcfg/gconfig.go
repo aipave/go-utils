@@ -5,6 +5,8 @@ import (
     "io/ioutil"
     "reflect"
     "strings"
+
+    "gopkg.in/yaml.v3"
 )
 
 func LoadYamlCfg(path string, v interface{}) {
