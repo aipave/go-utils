@@ -5,13 +5,20 @@ common components
 ## Todo
 - [x] gcache test
 - [x] gcast test
-- [ ] gcfg test
-- [ ] gemail test
-- [ ] gerr test
-- [ ] ginfos test
 - [x] gracexit test
 - [x] gtime test
 - [x] gtoken test
+- [ ] galert test
+- [ ] gerr test
+- [ ] gnet test
+- [ ] grpclient test
+- [ ] gqpst test
+- [ ] gslice test
+- [ ] xxxxxxxx test
+- 
+- [ ] gcfg test
+- [ ] gemail test
+- [ ] ginfos test
 - [ ] gzip test
 
 ## Tips
