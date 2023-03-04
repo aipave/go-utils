@@ -11,6 +11,8 @@ common components
 - [x] galert test
 - [x] gslice test
 - [x] gerr test
+- [x] gerr test
+- [ ] glogs test
 - [ ] gnet test
 - [ ] grpclient test
 - [ ] gqpst test
