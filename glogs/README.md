@@ -1,32 +1,34 @@
-# yoho-logs
+# logs
 
-## 说明：
-1. 定义log formatter
-1. 重定向log日志目录
-1. log rotate设置
+## Description
+1. Define log formatter
+2. Redirect log directory
+3. Set up log rotation.
 
 ## Usage
 ```go
 func yourLogic() {
-    defer yrecover.Recover()
-
+    defer grecover.Recover()
     // some logic here
 }
 ```
 
 ## Recover
-使用recover捕获的panic会输出到panic.log然后触发alert告警
+The panic captured by recover will be output to the panic log and then trigger an alert
 ```go
 func yourLogic() {
-    defer yrecover.Recover()
+    defer grecover.Recover()
 
     // some logic here
 }
 ```
 
-## 未捕获的panic
-程序重新被拉起来后，会根据如下分割线分割成多个日志块，并获取最后一个块
-如果匹配到panic日志，会触发alert告警
+## Uncaught Panic
+After the program is restarted, it will be split into multiple 
+log blocks according to the following separator, 
+and the last block will be obtained. 
+If a panic log is matched, an alert will be triggered.
+
 ```go
 progress started at: ---------%v-----------
 ```

@@ -30,7 +30,8 @@ const (
 )
 
 const (
-    IMinute int64 = 60
+    ISecond int64 = 1
+    IMinute int64 = 60 * ISecond
     IHour   int64 = 60 * IMinute
     IDay    int64 = 24 * IHour
     IWeek   int64 = 7 * IDay

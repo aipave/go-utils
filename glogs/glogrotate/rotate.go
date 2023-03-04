@@ -1,4 +1,4 @@
-package ylogrotate
+package glogrotate
 
 import (
     "sync"

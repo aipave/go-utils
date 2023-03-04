@@ -1,4 +1,4 @@
-package ylogrus
+package glogrus
 
 import (
 	"github.com/natefinch/lumberjack"

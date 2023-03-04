@@ -1,4 +1,4 @@
-package ylogrus
+package glogrus
 
 import (
     "context"
@@ -12,8 +12,8 @@ import (
     "github.com/natefinch/lumberjack"
 
     "github.com/alyu01/go-utils/ginfos"
-    "github.com/alyu01/go-utils/glogs/ylogrotate"
-    "github.com/alyu01/go-utils/glogs/ypanic"
+    "github.com/alyu01/go-utils/glogs/glogrotate"
+    "github.com/alyu01/go-utils/glogs/gpanic"
 
     nested "github.com/antonfisher/nested-logrus-formatter"
 
@@ -51,9 +51,9 @@ func Init(opts ...LogOption) {
     }
 
     once.Do(func() {
-        ypanic.Redirect("panic.log") // 重定向panic日志
+        gpanic.Redirect("panic.log") // 重定向panic日志
 
-        logrus.SetOutput(ylogrotate.NewWriter(&lumberjack.Logger{
+        logrus.SetOutput(glogrotate.NewWriter(&lumberjack.Logger{
             Filename:   "log/" + ginfos.Runtime.Exec() + ".log",
             MaxSize:    256, // 256M
             MaxAge:     30,  // 30d
@@ -69,7 +69,7 @@ func Init(opts ...LogOption) {
     })
 
     if len(cfg.filename) > 0 {
-        logrus.SetOutput(ylogrotate.NewWriter(&lumberjack.Logger{
+        logrus.SetOutput(glogrotate.NewWriter(&lumberjack.Logger{
             Filename:   cfg.filename,
             MaxSize:    256, // 256M
             MaxAge:     30,  // 30day
@@ -80,7 +80,7 @@ func Init(opts ...LogOption) {
     }
 
     if cfg.lumLogger != nil {
-        logrus.SetOutput(ylogrotate.NewWriter(cfg.lumLogger))
+        logrus.SetOutput(glogrotate.NewWriter(cfg.lumLogger))
     }
 }
 

@@ -1,4 +1,4 @@
-package ylogrus
+package glogrus
 
 import (
     "fmt"
@@ -19,7 +19,7 @@ const dailyFormat = gtime.FormatDate
 var fileMap = smap.NewMap[string, int64](options.WithLocker())
 
 // NewDailyLog
-// yNewDailyLog("svip.log", ylogrus.WithMaxAge(30)) 
+// yNewDailyLog("svip.log", glogrus.WithMaxAge(30))
 func NewDailyLog(filename string, opts ...LogOption) *logrus.Logger {
     var c = config{maxAge: 60}
     for _, fn := range opts {

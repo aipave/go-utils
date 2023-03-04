@@ -1,6 +1,6 @@
 //go:build windows
 
-package ypanic
+package gpanic
 
 // Redirect
 func Redirect(filename string) {

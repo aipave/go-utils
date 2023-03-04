@@ -1,4 +1,4 @@
-package yrecover
+package grecover
 
 import (
     "fmt"

@@ -1,7 +1,7 @@
-package ylogrus
+package glogrus
 
 import (
-    "github.com/alyu01/go-utils/glogs/ylogrotate"
+    "github.com/alyu01/go-utils/glogs/glogrotate"
     "github.com/natefinch/lumberjack"
     "github.com/sirupsen/logrus"
 )
@@ -18,7 +18,7 @@ func NewLogger(opts ...LogOption) (l *logrus.Logger) {
     l.SetLevel(logrus.DebugLevel)
     l.SetReportCaller(true)
     l.SetFormatter(defaultFormatter)
-    l.SetOutput(ylogrotate.NewWriter(&lumberjack.Logger{
+    l.SetOutput(glogrotate.NewWriter(&lumberjack.Logger{
         Filename:   c.filename,
         MaxSize:    256, // 256M
         MaxAge:     30,  //
@@ -31,7 +31,7 @@ func NewLogger(opts ...LogOption) (l *logrus.Logger) {
         l.AddHook(hook)
     }
     if c.lumLogger != nil {
-        l.SetOutput(ylogrotate.NewWriter(c.lumLogger))
+        l.SetOutput(glogrotate.NewWriter(c.lumLogger))
     }
 
     if c.logLevel != nil {

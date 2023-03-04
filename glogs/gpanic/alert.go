@@ -1,4 +1,4 @@
-package ypanic
+package gpanic
 
 import (
     "bytes"
