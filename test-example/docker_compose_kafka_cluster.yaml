@@ -1,0 +1,107 @@
+version: '3'
+
+networks:
+  app-tier:
+    driver: bridge
+    external: true
+
+services:
+  # When stopping the kafka cluster, be sure to wait until all node processes of kafka are stopped before stopping the zookeeper cluster. Because the kafka cluster related information is recorded in the zookeeper cluster, once the zookeeper cluster is stopped first,
+  # the kafka cluster has no way to obtain the information of the stopped process, and can only manually kill the kafka process
+  zookeeper-01:
+    user: root
+    image: 'bitnami/zookeeper:latest'
+    container_name: zookeeper-01
+    restart: always
+    hostname: zookeeper-01
+    ports:
+      - "2181:2181"
+    networks:
+      - app-tier
+    environment:
+      - ZOO_MY_ID=1
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-01:2181
+      - ZOOKEEPER_CLIENT_PORT=zookeeper-01:2181
+      - ZOO_SERVER=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
+  zookeeper-02:
+    user: root
+    image: 'bitnami/zookeeper:latest'
+    container_name: zookeeper-02
+    restart: always
+    hostname: zookeeper-02
+    ports:
+      - "2182:2181"
+    networks:
+      - app-tier
+    environment:
+      - ZOO_MY_ID=2
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-02:2182
+      - ZOOKEEPER_CLIENT_PORT=zookeeper-02:2182
+      - ZOO_SERVER=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
+  zookeeper-03:
+    user: root
+    image: 'bitnami/zookeeper:latest'
+    container_name: zookeeper-03
+    restart: always
+    hostname: zookeeper-03
+    ports:
+      - "2183:2181"
+    networks:
+      - app-tier
+    environment:
+      - ZOO_MY_ID=3
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-03:2183
+      - ZOOKEEPER_CLIENT_PORT=zookeeper-03:2183
+      - ZOO_SERVER=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
+  kafka-01:
+    user: root
+    restart: always
+    container_name: kafka-01
+    hostname: kafka-01
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '9092:9092'
+    networks:
+      - app-tier
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-01:2181,zookeeper-02:2182,zookeeper-03:2183/kafka
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+    depends_on:
+      - zookeeper-01
+      - zookeeper-02
+      - zookeeper-03
+  kafka-02:
+    user: root
+    restart: always
+    container_name: kafka-02
+    hostname: kafka-02
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '9093:9093'
+    networks:
+      - app-tier
+    environment:
+      - KAFKA_BROKER_ID=2
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9093
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-01:2181,zookeeper-02:2182,zookeeper-03:2183/kafka
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+    depends_on:
+      - zookeeper-01
+      - zookeeper-02
+      - zookeeper-03
+
+#$ docker-compose -f docker_compose_kafka_cluster.yaml up -d
+
+#$ docker exec -it kafka-01 /bin/bash
+
+# cd /opt/bitnami/kafka/bin
+

@@ -1,0 +1,35 @@
+Log:
+  Level: debug
+  Path: /Users/ricco/mod/go-utils/test-example
+  Mode: file
+
+RRedis:
+  Addr: localhost:6379
+  Password:
+  DB: 0
+  PoolSize: 100
+  ReadTimeout: 10000
+  WriteTimeout: 0
+
+RWRedis:
+  Addr: localhost:6379
+  Password: your_redis_password
+  DB: 0
+  PoolSize: 100
+  ReadTimeout: 10000
+  WriteTimeout: 20000
+
+RWMysql: "root:123@tcp(localhost:3306)/mydatabase"
+
+Mongo:
+  User: your_mongo_user
+  Password: your_mongo_password
+  Addr:
+    - host1:port1
+    - host2:port2
+  Database: your_database_name
+  PoolSize: your_connection_pool_size
+  Timeout: your_timeout_duration
+
+Kafka: localhost:9092,localhost:9093
+#Kafka: localhost:9092

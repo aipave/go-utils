@@ -1,0 +1,5 @@
+
+*.xml
+*.iml
+/test-example/panic.log
+/test-example/log/
