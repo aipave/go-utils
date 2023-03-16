@@ -49,9 +49,11 @@ func Init(opts ...LogOption) {
 	for _, fn := range opts {
 		fn(&cfg)
 	}
+	logrus.Infof("alertUrl is %v", cfg)
 
 	once.Do(func() {
-		gpanic.Redirect("panic.log") // 重定向panic日志
+		gpanic.PAlertMgr.AlertUrl = cfg.alertUrl
+		gpanic.PAlertMgr.Redirect("panic.log") // 重定向panic日志
 
 		logrus.SetOutput(glogrotate.NewWriter(&lumberjack.Logger{
 			Filename:   "log/" + ginfos.Runtime.Exec() + ".log",
