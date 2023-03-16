@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/aipave/go-utils/gtime"
+	"github.com/aipave/go-utils/gwarn"
 	"github.com/natefinch/lumberjack"
 
 	"github.com/aipave/go-utils/ginfos"
@@ -51,7 +52,11 @@ func Init(opts ...LogOption) {
 	}
 
 	once.Do(func() {
-		gpanic.Redirect("panic.log") // 重定向panic日志
+		gpanic.Redirect("panic.log", cfg.alertUrl) // 重定向panic日志
+
+		gwarn.AleterGetter(cfg.alertUrl, "test", gwarn.SetShowIp(true), gwarn.SetCardColor("grey"),
+			gwarn.SetFontColor(gwarn.FontColorRed)).
+			Notice(fmt.Sprintf("area: ID\ntime: %v \nQ: hello world", time.Now().Unix()))
 
 		logrus.SetOutput(glogrotate.NewWriter(&lumberjack.Logger{
 			Filename:   "log/" + ginfos.Runtime.Exec() + ".log",
@@ -81,6 +86,12 @@ func Init(opts ...LogOption) {
 
 	if cfg.lumLogger != nil {
 		logrus.SetOutput(glogrotate.NewWriter(cfg.lumLogger))
+	}
+}
+
+func WithAlertUrl(url string) LogOption {
+	return func(cfg *config) {
+		cfg.alertUrl = url
 	}
 }
 
