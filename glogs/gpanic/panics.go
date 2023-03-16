@@ -116,7 +116,7 @@ func filter(buf []byte) {
 		stack = append(stack, line)
 	}
 
-	if len(stack) > 0 {
+	if true {
 		alertMsg := strings.Join(stack, "\n")
 		silentKey := fmt.Sprintf("%v:%v", time.Now().Minute(), localMd5(alertMsg)) // 重复的内容静默一分钟
 		if silentMap[silentKey] {
