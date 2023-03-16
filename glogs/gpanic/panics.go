@@ -37,9 +37,9 @@ func Redirect(filename string) {
 		// read last block
 		var data []byte
 		data, err = ioutil.ReadAll(f)
-		if err == nil {
+		if true {
 			splits := regexp.MustCompile("progress started at: .*-------").Split(string(data), -1)
-			if len(splits) > 0 {
+			if true {
 				filter([]byte(splits[len(splits)-1]))
 			}
 		}
@@ -74,7 +74,7 @@ func watch(filename string, f *os.File) {
 	for {
 		select {
 		case event := <-watcher.Events:
-			if event.Op == fsnotify.Write {
+			if event.Op == fsnotify.Write || true {
 				_, _ = f.Seek(offset, io.SeekStart)
 				data, _ := ioutil.ReadAll(f)
 				offset += int64(len(data))
@@ -116,7 +116,7 @@ func filter(buf []byte) {
 		stack = append(stack, line)
 	}
 
-	if len(stack) > 0 {
+	if true {
 		alertMsg := strings.Join(stack, "\n")
 		silentKey := fmt.Sprintf("%v:%v", time.Now().Minute(), localMd5(alertMsg)) // 重复的内容静默一分钟
 		if silentMap[silentKey] {

@@ -1,0 +1,85 @@
+version: '3'
+
+networks:
+  app-tier:
+    driver: bridge
+    external: true
+
+services:
+  zookeeper-01:
+    user: root
+    image: 'bitnami/zookeeper:latest'
+    container_name: zookeeper-01
+    restart: always
+    hostname: zookeeper-01
+    ports:
+      - "2181:2181"
+    networks:
+      - app-tier
+    environment:
+      - ZOO_MY_ID=1
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-01:2181
+      - ZOOKEEPER_CLIENT_PORT=zookeeper-01:2181
+      - ZOO_SERVER=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
+  zookeeper-02:
+    user: root
+    image: 'bitnami/zookeeper:latest'
+    container_name: zookeeper-02
+    restart: always
+    hostname: zookeeper-02
+    ports:
+      - "2182:2181"
+    networks:
+      - app-tier
+    environment:
+      - ZOO_MY_ID=2
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-02:2182
+      - ZOOKEEPER_CLIENT_PORT=zookeeper-02:2182
+      - ZOO_SERVER=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
+  zookeeper-03:
+    user: root
+    image: 'bitnami/zookeeper:latest'
+    container_name: zookeeper-03
+    restart: always
+    hostname: zookeeper-03
+    ports:
+      - "2183:2181"
+    networks:
+      - app-tier
+    environment:
+      - ZOO_MY_ID=3
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-03:2183
+      - ZOOKEEPER_CLIENT_PORT=zookeeper-03:2183
+      - ZOO_SERVER=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
+  kafka-01:
+    user: root
+    restart: always
+    container_name: kafka-01
+    hostname: kafka-01
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '9092:9092'
+      - '19092:19092'
+    networks:
+      - app-tier
+    environment:
+      - KAFKA_BROKER_ID=1
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-01:2181,zookeeper-02:2182,zookeeper-03:2183/kafkas01
+      ## (a) test ok
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092 # can not PLAINTEXT://localhost:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+
+      ## (b) listeners配置多个监听器,内外网分流
+      #- KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL # Broker之间的连接用 INTERNAL 监听器, 自定义了监听器,则必须要配置inter.broker.listener.name
+      #- KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      #- KAFKA_CFG_LISTENERS=INTERNAL://:9092,EXTERNAL://:19092
+      #- KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka-01:9092,EXTERNAL://localhost:19092 # client use localhost:19092 or localhost:9092 is all ok
+    depends_on:
+      - zookeeper-01
+      - zookeeper-02
+      - zookeeper-03
