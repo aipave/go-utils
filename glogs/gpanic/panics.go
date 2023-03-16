@@ -24,10 +24,12 @@ import (
 var once sync.Once
 var offset int64
 
-var PAlertMgr *AlertMgr
+var PAlertMgr *AlertMgr = &AlertMgr{}
 
 type AlertMgr struct {
-	AlertUrl string
+	AlertUrl       string
+	IgnoreIpSet    []string
+	IgnoreIpPrefix []string
 }
 
 // Redirect

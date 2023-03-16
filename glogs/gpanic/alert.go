@@ -64,14 +64,16 @@ func buildAlert(stack string) (c card) {
 func (a *AlertMgr) triggerAlert(card interface{}) {
 	var currentIP = ginfos.Runtime.IP()
 	// todo: Some ip do not alarm
-	for _, devIP := range []string{"10.10.xx.xxx"} {
-		if currentIP == devIP {
+	for _, ignorePrefix := range a.IgnoreIpPrefix {
+		if strings.HasPrefix(currentIP, ignorePrefix) {
+			return
+		}
+	}
+	for _, ignoreIP := range a.IgnoreIpSet {
+		if currentIP == ignoreIP {
 			return
 		}
 
-		if strings.HasPrefix(currentIP, "xxx.xx.") || strings.HasPrefix(currentIP, "10.10.xxx.") {
-			return
-		}
 	}
 
 	content, _ := json.Marshal(card)
