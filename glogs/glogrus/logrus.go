@@ -49,7 +49,6 @@ func Init(opts ...LogOption) {
 	for _, fn := range opts {
 		fn(&cfg)
 	}
-	logrus.Infof("alertUrl is %v", cfg)
 
 	once.Do(func() {
 		gpanic.PAlertMgr.AlertUrl = cfg.alertUrl
@@ -87,6 +86,7 @@ func Init(opts ...LogOption) {
 	if cfg.lumLogger != nil {
 		logrus.SetOutput(glogrotate.NewWriter(cfg.lumLogger))
 	}
+	logrus.Infof("Init log config is %v", cfg)
 }
 
 func WithFields(fields logrus.Fields) *logrus.Entry {
