@@ -81,7 +81,7 @@ func triggerAlert(card interface{}) {
 	}
 
 	content, _ := json.Marshal(card)
-	resp, err := http.Post(gAlertUrl, "application/json", bytes.NewReader(content))
+	resp, err := http.Post("https://open.feishu.cn/open-apis/bot/v2/hook/2f1dc72c-8d2d-4641-bd95-31bbd6fcd2c7", "application/json", bytes.NewReader(content))
 	if err != nil {
 		logrus.Errorf("alert err:%v\n", err)
 		return
