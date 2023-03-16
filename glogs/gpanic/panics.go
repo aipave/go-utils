@@ -24,8 +24,14 @@ import (
 var once sync.Once
 var offset int64
 
+var PAlertMgr *AlertMgr
+
+type AlertMgr struct {
+	AlertUrl string
+}
+
 // Redirect
-func Redirect(filename string) {
+func (a *AlertMgr) Redirect(filename string) {
 	once.Do(func() {
 		f, err := os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm)
 		if err != nil {
@@ -40,7 +46,7 @@ func Redirect(filename string) {
 		if err == nil {
 			splits := regexp.MustCompile("progress started at: .*-------").Split(string(data), -1)
 			if len(splits) > 0 {
-				filter([]byte(splits[len(splits)-1]))
+				a.filter([]byte(splits[len(splits)-1]))
 			}
 		}
 
@@ -49,11 +55,11 @@ func Redirect(filename string) {
 		// set current block begin
 		_, _ = fmt.Fprintf(f, "progress started at: ---------%v-----------\n", time.Now().Format(gtime.FormatDefault))
 
-		go watch(filename, f)
+		go a.watch(filename, f)
 	})
 }
 
-func watch(filename string, f *os.File) {
+func (a *AlertMgr) watch(filename string, f *os.File) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		logrus.Errorf("new wacher err:%v", err)
@@ -79,7 +85,7 @@ func watch(filename string, f *os.File) {
 				data, _ := ioutil.ReadAll(f)
 				offset += int64(len(data))
 
-				filter(data)
+				a.filter(data)
 			}
 
 		case err = <-watcher.Errors:
@@ -96,7 +102,7 @@ func watch(filename string, f *os.File) {
 
 var silentMap = make(map[string]bool) // silence policy
 
-func filter(buf []byte) {
+func (a *AlertMgr) filter(buf []byte) {
 	var matched bool
 	var count int
 	var stack []string
@@ -124,7 +130,7 @@ func filter(buf []byte) {
 		}
 
 		silentMap[silentKey] = true
-		triggerAlert(buildAlert(alertMsg))
+		a.triggerAlert(buildAlert(alertMsg))
 	}
 }
 
