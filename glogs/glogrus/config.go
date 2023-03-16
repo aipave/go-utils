@@ -6,14 +6,16 @@ import (
 )
 
 type config struct {
-	lumLogger    *lumberjack.Logger
-	logLevel     *logrus.Level
-	reportCaller *bool
-	formatter    logrus.Formatter
-	hooks        []logrus.Hook
-	maxAge       int64
-	filename     string
-	alertUrl     string
+	lumLogger      *lumberjack.Logger
+	logLevel       *logrus.Level
+	reportCaller   *bool
+	formatter      logrus.Formatter
+	hooks          []logrus.Hook
+	maxAge         int64
+	filename       string
+	alertUrl       string
+	ignoreIpSet    []string
+	ignoreIpPrefix []string
 }
 
 type LogOption func(*config)
@@ -36,6 +38,18 @@ func WithAlertUrl(url string) LogOption {
 func WithLogLevel(level logrus.Level) LogOption {
 	return func(c *config) {
 		c.logLevel = &level
+	}
+}
+
+func WithIgnoreIpSet(set []string) LogOption {
+	return func(c *config) {
+		c.ignoreIpSet = set
+	}
+}
+
+func WithIgnoreIpPrefix(set []string) LogOption {
+	return func(c *config) {
+		c.ignoreIpPrefix = set
 	}
 }
 

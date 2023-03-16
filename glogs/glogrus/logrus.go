@@ -53,6 +53,9 @@ func Init(opts ...LogOption) {
 
 	once.Do(func() {
 		gpanic.PAlertMgr.AlertUrl = cfg.alertUrl
+		gpanic.PAlertMgr.IgnoreIpPrefix = cfg.ignoreIpPrefix
+		gpanic.PAlertMgr.IgnoreIpSet = cfg.ignoreIpSet
+
 		gpanic.PAlertMgr.Redirect("panic.log") // 重定向panic日志
 
 		logrus.SetOutput(glogrotate.NewWriter(&lumberjack.Logger{
