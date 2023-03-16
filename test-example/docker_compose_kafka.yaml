@@ -1,101 +1,26 @@
-version: '3'
-
-networks:
-  app-tier:
-    driver: bridge
-    external: true
-
+version: '2'
 services:
-  zookeeper-01:
-    user: root
-    image: 'bitnami/zookeeper:latest'
-    container_name: zookeeper-01
-    restart: always
-    hostname: zookeeper-01
-    ports:
-      - "2181:2181"
-    networks:
-      - app-tier
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
     environment:
-      - ZOO_MY_ID=1
-      - ALLOW_ANONYMOUS_LOGIN=yes
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-01:2181
-      - ZOOKEEPER_CLIENT_PORT=zookeeper-01:2181
-      - ZOO_SERVER=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
-  zookeeper-02:
-    user: root
-    image: 'bitnami/zookeeper:latest'
-    container_name: zookeeper-02
-    restart: always
-    hostname: zookeeper-02
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - "2182:2181"
-    networks:
-      - app-tier
-    environment:
-      - ZOO_MY_ID=2
-      - ALLOW_ANONYMOUS_LOGIN=yes
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-02:2182
-      - ZOOKEEPER_CLIENT_PORT=zookeeper-02:2182
-      - ZOO_SERVER=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
-  zookeeper-03:
-    user: root
-    image: 'bitnami/zookeeper:latest'
-    container_name: zookeeper-03
-    restart: always
-    hostname: zookeeper-03
-    ports:
-      - "2183:2181"
-    networks:
-      - app-tier
-    environment:
-      - ZOO_MY_ID=3
-      - ALLOW_ANONYMOUS_LOGIN=yes
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-03:2183
-      - ZOOKEEPER_CLIENT_PORT=zookeeper-03:2183
-      - ZOO_SERVER=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
-  kafka-01:
-    user: root
-    restart: always
-    container_name: kafka-01
-    hostname: kafka-01
-    image: 'bitnami/kafka:latest'
-    ports:
-      - '9092:9092'
-      - '9093:9093'
-    networks:
-      - app-tier
-    environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
-      # If you want to connect to the kafka cluster through the host, you need to add kafka cfg
-      # listeners and kafka cfg advertised listeners configuration and kafka cfg advertised listeners s configuration address is the corresponding ip of the host, kafka cfg advertised listeners is the listening address exposed to the client
-      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://localhost:9092,EXTERNAL://localhost:9093  # an advertised listener named "CLIENT" that clients should use to communicate with the Kafka broker over the localhost interface on port 9093. This listener uses the PLAINTEXT security protocol.
-                                                                  # an advertised listener named "EXTERNAL" that clients should use to communicate with the Kafka broker from outside the Docker network over the localhost interface on port 9093. This listener also uses the PLAINTEXT security protocol.
-                                                                  # The Client port number 9093 is used because it is the port that is mapped to the Kafka broker's internal port 9092 using the ports directive in the Docker Compose file.
-      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093 # The CLIENT listener is used for internal communication between brokers;
-                                                            # The EXTERNAL listener is typically used for communication with clients from outside the Docker network.
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-01:2181,zookeeper-02:2182,zookeeper-03:2183/kafka
-      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+      - 22181:2181
 
-      #- KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
-      #- KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
-
-      #> not support to KAFKA_CREATE_TOPICS
-      #- KAFKA_CREATE_TOPICS="game-center:1:2,sign-server:1:1" # <topic-name> is the name of the topic you want to create.
-                                      # <partitions> is the number of partitions you want to create for the topic.
-                                      # <replication-factor> is the replication factor you want to use for the topic
+  kafka:
+    user: root
+    restart: always
+    container_name: kafka-1
+    image: confluentinc/cp-kafka:latest
     depends_on:
-      - zookeeper-01
-      - zookeeper-02
-      - zookeeper-03
-  #kafka-manager:
-  #  image: "sheepkiller/kafka-manager"
-  #  depends_on:
-  #    - zookeeper-01
-  #  ports:
-  #    - "9190:9000"
-  #  environment:
-  #    - ZK_HOSTS=zookeeper-01:2181
+      - zookeeper
+    ports:
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1

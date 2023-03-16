@@ -1,4 +1,6 @@
 version: '3'
+# https://github.com/bitnami/containers/blob/main/bitnami/kafka/docker-compose-cluster.yml
+# error: https://stackoverflow.com/questions/59169763/error-could-not-find-java-executable-in-java-home-or-path-while-installing-s
 
 networks:
   app-tier:
@@ -6,8 +8,6 @@ networks:
     external: true
 
 services:
-  # When stopping the kafka cluster, be sure to wait until all node processes of kafka are stopped before stopping the zookeeper cluster. Because the kafka cluster related information is recorded in the zookeeper cluster, once the zookeeper cluster is stopped first,
-  # the kafka cluster has no way to obtain the information of the stopped process, and can only manually kill the kafka process
   zookeeper-01:
     user: root
     image: 'bitnami/zookeeper:latest'
@@ -19,11 +19,14 @@ services:
     networks:
       - app-tier
     environment:
-      - ZOO_MY_ID=1
-      - ALLOW_ANONYMOUS_LOGIN=yes
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-01:2181
+      - ZOOKEEPER_SERVER_ID=1
       - ZOOKEEPER_CLIENT_PORT=zookeeper-01:2181
-      - ZOO_SERVER=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
+      - ZOOKEEPER_TICK_TIME=2000
+      - ZOOKEEPER_INIT_LIMIT=5
+      - ZOOKEEPER_SYNC_LIMIT=2
+      - ZOOKEEPER_SERVERS=localhost:22888:23888;localhost:32888:33888;localhost:42888:43888
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      #- ZOO_SERVERS=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
   zookeeper-02:
     user: root
     image: 'bitnami/zookeeper:latest'
@@ -36,10 +39,13 @@ services:
       - app-tier
     environment:
       - ZOO_MY_ID=2
+      - ZOOKEEPER_CLIENT_PORT=2182
+      - ZOOKEEPER_TICK_TIME=2000
+      - ZOOKEEPER_INIT_LIMIT=5
+      - ZOOKEEPER_SYNC_LIMIT=2
+      - ZOOKEEPER_SERVERS=localhost:22888:23888;localhost:32888:33888;localhost:42888:43888
+      #- ZOO_SERVERS=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
       - ALLOW_ANONYMOUS_LOGIN=yes
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-02:2182
-      - ZOOKEEPER_CLIENT_PORT=zookeeper-02:2182
-      - ZOO_SERVER=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
   zookeeper-03:
     user: root
     image: 'bitnami/zookeeper:latest'
@@ -51,11 +57,14 @@ services:
     networks:
       - app-tier
     environment:
-      - ZOO_MY_ID=3
+      - ZOO_MY_ID=2
+      - ZOOKEEPER_CLIENT_PORT=2183
+      - ZOOKEEPER_TICK_TIME=2000
+      - ZOOKEEPER_INIT_LIMIT=5
+      - ZOOKEEPER_SYNC_LIMIT=2
+      - ZOOKEEPER_SERVERS=localhost:22888:23888;localhost:32888:33888;localhost:42888:43888
+      #- ZOO_SERVERS=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
       - ALLOW_ANONYMOUS_LOGIN=yes
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-03:2183
-      - ZOOKEEPER_CLIENT_PORT=zookeeper-03:2183
-      - ZOO_SERVER=server.1=zookeeper-01:2888:3888;2181 server.2=zookeeper-02:2888:3888;2181 server.3=zookeeper-03:2888:3888;2181
   kafka-01:
     user: root
     restart: always
@@ -64,6 +73,7 @@ services:
     image: 'bitnami/kafka:latest'
     ports:
       - '9092:9092'
+      - '19092:19092'
     networks:
       - app-tier
     environment:
@@ -71,8 +81,10 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-01:2181,zookeeper-02:2182,zookeeper-03:2183/kafkas01
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=INTERNAL://:9092,EXTERNAL://:19092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka-01:9092,EXTERNAL://localhost:19092
     depends_on:
       - zookeeper-01
       - zookeeper-02
@@ -85,6 +97,7 @@ services:
     image: 'bitnami/kafka:latest'
     ports:
       - '9093:9092'
+      - '19093:19303'
     networks:
       - app-tier
     environment:
@@ -92,8 +105,10 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-01:2181,zookeeper-02:2182,zookeeper-03:2183/kafkas01
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9093
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=INTERNAL://:9093,EXTERNAL://:19093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka-02:9093,EXTERNAL://localhost:19093
     depends_on:
       - zookeeper-01
       - zookeeper-02
@@ -106,6 +121,7 @@ services:
     image: 'bitnami/kafka:latest'
     ports:
       - '9094:9092'
+      - '19094:19094'
     networks:
       - app-tier
     environment:
@@ -113,8 +129,10 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-01:2181,zookeeper-02:2182,zookeeper-03:2183/kafkas01
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9094
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9094
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=INTERNAL://:9094,EXTERNAL://:19094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka-03:9094,EXTERNAL://localhost:19094
     depends_on:
       - zookeeper-01
       - zookeeper-02

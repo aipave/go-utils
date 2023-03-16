@@ -149,3 +149,255 @@ script flush // Clears all the Lua script cache
 script exists "c686f316aaf1eb01d5a4de1b0b63cd233010e63d" // After the cache is cleared, the digest no longer exists.
 
 ```
+
+# 3. kafka cluter test
+## 3.1 confluentinc/cp-kafka
+### 3.1.1 install docker 
+```bash
+docker pull confluentinc/cp-kafka
+docker pull confluentinc/cp-zookeeper
+```
+### 3.1.2 docker-compose file
+```yaml
+---
+version: '2'
+services:
+  cp-zookeeper-1:
+    user: root
+    restart: always
+    container_name: cp-zookeeper-1
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+
+  cp-zookeeper-2:
+    user: root
+    restart: always
+    container_name: cp-zookeeper-2
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 32181:2181
+  cp-zookeeper-3:
+    user: root
+    restart: always
+    container_name: cp-zookeeper-3
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 42181:2181
+
+  kafka-1:
+    user: root
+    restart: always
+    container_name: kafka-1
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - cp-zookeeper-1
+      - cp-zookeeper-2
+      - cp-zookeeper-3
+
+    ports:
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: cp-zookeeper-1:2181,cp-zookeeper-2:2181,cp-zookeeper-3:2181/kafkas-a
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  kafka-2:
+    user: root
+    restart: always
+    container_name: kafka-2
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - cp-zookeeper-1
+      - cp-zookeeper-2
+      - cp-zookeeper-3
+    ports:
+      - 39092:39092
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: cp-zookeeper-1:2181,cp-zookeeper-2:2181,cp-zookeeper-3:2181/kafkas-a
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:9092,PLAINTEXT_HOST://localhost:39092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  kafka-3:
+    user: root
+    restart: always
+    container_name: kafka-3
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - cp-zookeeper-1
+      - cp-zookeeper-2
+      - cp-zookeeper-3
+    ports:
+      - 49092:39092
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: cp-zookeeper-1:2181,cp-zookeeper-2:2181,cp-zookeeper-3:2181/kafkas-a
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:9092,PLAINTEXT_HOST://localhost:39092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+```
+### 3.1.3 start docker cluster
+```yaml
+$ docker-compose  -f docker_compose_cp-kafka-cluster.yaml up -d
+[+] Running 6/6
+ ⠿ Container cp-zookeeper-2  Started                                                                                                                              0.4s
+ ⠿ Container cp-zookeeper-1  Started                                                                                                                              0.4s
+ ⠿ Container cp-zookeeper-3  Started                                                                                                                              0.4s
+ ⠿ Container kafka-2         Started                                                                                                                              0.5s
+ ⠿ Container kafka-1         Started                                                                                                                              0.7s
+ ⠿ Container kafka-3         Started    
+```
+
+### 3.1.4 go test demo
+config in yaml 
+```yaml
+Kafka: localhost:29092,localhost:39092,localhost:49092 #for cp/kafka
+```
+code main body
+```go
+const (
+	TopicCoinOption = "coinOption" // charge, add, decrease
+	TopicFlowFlow   = "followFlow" // follow, unfollow
+)
+
+func TestKafkaConsumerGroup(t *testing.T) {
+	// Producer
+	go func() {
+		var syncProducer sarama.SyncProducer
+		syncProducer = gkafka.InitSyncProducer(gkafka.Hosts(strings.Split(GetKafkaConfig().Kafka, ",")))
+		logrus.Infof("init kafka host:%v", GetKafkaConfig().Kafka)
+
+		tick := time.Tick(1 * time.Second)
+		ctx, cancel := context.WithCancel(context.Background())
+		gexit.Close(cancel)
+	Loop:
+		for {
+			select {
+			case <-tick:
+				uu, _ := uuid.GenerateUUID()
+				sid := algorithms.Snowflake.NextOptStreamID()
+				var msg *UserCoinOption = &UserCoinOption{
+					Header: gkafka.Header{
+						SeqID:         gcast.ToString(sid),
+						TraceID:       fmt.Sprintf("%v.%v", uu, ginfos.FuncName()),
+						CorrelationID: uu,
+						Topic:         TopicCoinOption,
+						ContentType:   gkafka.ContentTypeJSON,
+						Key: gkafka.KeyInfo{
+							KeyType:    gkafka.KeyTypeProductID,
+							KeyContent: "my_app",
+						},
+						Source:    ginfos.Runtime.IP(),
+						Timestamp: time.Now().Unix(),
+					},
+					SID:     sid,
+					UID:     123456,
+					Type:    100,
+					Amount:  int64(1) + rand.Int63()%99,
+					Balance: 100,
+				}
+				if err := gkafka.PublishSyncMessage(syncProducer, TopicCoinOption, msg); err != nil {
+					logrus.Errorf("publish error|msg=%v, err:%v", msg, err)
+				} else {
+					logrus.Infof("[producer]push ok|msg=%v", msg)
+				}
+			case <-ctx.Done():
+				logrus.Errorf("publish error")
+				break Loop
+
+			}
+		}
+
+	}()
+
+	// Consumer
+	go func() {
+		gkafka.InitKafkaConsumerGroup(gkafka.Hosts(strings.Split(GetKafkaConfig().Kafka, ",")),
+			gkafka.Retry(true),
+			gkafka.Topics(
+				TopicCoinOption,
+				TopicFlowFlow,
+			),
+			gkafka.Handler(kafkaHander))
+	}()
+
+	gexit.Wait()
+}
+
+func kafkaHander(ctx context.Context, consumerMsg *sarama.ConsumerMessage) (err error) {
+	switch consumerMsg.Topic {
+	case TopicCoinOption:
+		err = handleCoinOption(ctx, consumerMsg.Value)
+	case TopicFlowFlow:
+	default:
+		logrus.Warningf("unknown topic:%v,msg:%v", consumerMsg.Topic, consumerMsg.Value)
+
+	}
+	return nil
+}
+
+type UserCoinOption struct {
+	gkafka.Header
+	SID     int64 `json:"sid"`
+	UID     int64 `json:"uid"`
+	Type    int64 `json:"type"`
+	Amount  int64 `json:"amount"`
+	Balance int64 `json:"balance"`
+}
+
+func (msg *UserCoinOption) RandMarshal() (err error) {
+	msg = &UserCoinOption{}
+	uu, _ := uuid.GenerateUUID()
+	msg.Header = gkafka.Header{
+		SeqID:         gcast.ToString(algorithms.Snowflake.NextOptStreamID()),
+		TraceID:       fmt.Sprintf("%v.%v", uu, ginfos.FuncName()),
+		CorrelationID: uu,
+		Topic:         TopicCoinOption,
+		ContentType:   gkafka.ContentTypeJSON,
+		Key:           gkafka.KeyInfo{},
+		Source:        ginfos.Runtime.IP(),
+		Timestamp:     time.Now().Unix(),
+	}
+	return nil
+}
+
+func (msg *UserCoinOption) Unmarshal(b []byte) (err error) {
+	err = json.Unmarshal(b, msg)
+	return err
+}
+
+func handleCoinOption(ctx context.Context, b []byte) (err error) {
+	var msg *UserCoinOption = &UserCoinOption{}
+	err = msg.Unmarshal(b)
+	if err != nil {
+		logrus.Errorf("unmarshal err:%v", b)
+		return err
+	}
+
+	logrus.Infof("[consumer]marshal ok:%v", msg)
+	return nil
+}
+
+```
+### 3.1.5 result
+```
+15039-03-15 10:36:11.291 [/Users/xxx/mod/gomod/pkg/mod/github.com/aipave/go-utils@v0.0.58/gkafka/producer_with_sync.go:67 gkafka.PublishSyncMessage] [INFO] send message success, topic:coinOption partition:0 offset:688 value:{"id":"1635832233163300864","traceID":"3340cb86-464b-790f-92bc-f53a3057b6b1.func1","correlationID":"3340cb86-464b-790f-92bc-f53a3057b6b1","topic":"coinOption","contentType":"json","keyInfo":{"keyType":"key/product","keyContent":"my_app"},"version":"","source":"172.17.17.153","timestamp":1678847771,"sid":1635832233163300864,"uid":123456,"type":100,"amount":33,"balance":100}
+15039-03-15 10:36:11.292 [/Users/xxx/mod/go-utils/test-example/gkafka_test.go:184 command-line-arguments.TestKafkaConsumerGroup.func1] [INFO] [producer]push ok|msg=&{{1635832233163300864 3340cb86-464b-790f-92bc-f53a3057b6b1.func1 3340cb86-464b-790f-92bc-f53a3057b6b1 coinOption json {key/product my_app}  172.17.17.153 1678847771} 1635832233163300864 123456 100 33 100}
+15039-03-15 10:36:11.292 [/Users/xxx/mod/go-utils/test-example/gkafka_test.go:259 command-line-arguments.handleCoinOption] [INFO] [consumer]marshal ok:&{{1635832233163300864 3340cb86-464b-790f-92bc-f53a3057b6b1.func1 3340cb86-464b-790f-92bc-f53a3057b6b1 coinOption json {key/product my_app}  172.17.17.153 1678847771} 1635832233163300864 123456 100 33 100}
+
+```

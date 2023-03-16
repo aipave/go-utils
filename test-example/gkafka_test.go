@@ -20,7 +20,6 @@ import (
 	"github.com/aipave/go-utils/ginfos"
 	"github.com/aipave/go-utils/gkafka"
 	"github.com/aipave/go-utils/glogs/glogrus"
-	"github.com/aipave/go-utils/glogs/gpanic"
 	"github.com/hashicorp/go-uuid"
 	"github.com/segmentio/kafka-go"
 	"github.com/sirupsen/logrus"
@@ -54,7 +53,7 @@ func TestKafkaRead(t *testing.T) {
 
 // /> "github.com/Shopify/sarama"
 func TestKafkaConnect01(t *testing.T) {
-	//brokers := []string{"localhost:9093"} ///< for docker_compose_kafka.yaml
+	//brokers := []string{"localhost:9093"} ///< for docker_compose_kafka-unuseful.yaml
 	brokers := []string{"localhost:9092", "localhost:9093"} ///< for docker_compose_kafka_cluster.yaml
 
 	config := sarama.NewConfig()
@@ -132,9 +131,8 @@ func init() {
 		logrus.Errorf("unmarshal file err|%v", err)
 	}
 
-	glogrus.Init()
+	glogrus.Init(glogrus.WithAlerUrl("https://open.feishu.cn/open-apis/bot/v2/hook/2f1dc72c-8d2d-4641-bd95-31bbd6fcd2c7"))
 	glogrus.MustSetLevel(GetKafkaConfig().Log.Level)
-	gpanic.SetAlertUrl("https://open.feishu.cn/open-apis/bot/v2/hook/2f1dc72c-8d2d-4641-bd95-31bbd6fcd2c7")
 }
 
 const (
@@ -149,7 +147,7 @@ func TestKafkaConsumerGroup(t *testing.T) {
 		syncProducer = gkafka.InitSyncProducer(gkafka.Hosts(strings.Split(GetKafkaConfig().Kafka, ",")))
 		logrus.Infof("init kafka host:%v", GetKafkaConfig().Kafka)
 
-		tick := time.Tick(2 * time.Second)
+		tick := time.Tick(1 * time.Second)
 		ctx, cancel := context.WithCancel(context.Background())
 		gexit.Close(cancel)
 	Loop:
@@ -161,7 +159,7 @@ func TestKafkaConsumerGroup(t *testing.T) {
 				var msg *UserCoinOption = &UserCoinOption{
 					Header: gkafka.Header{
 						SeqID:         gcast.ToString(sid),
-						TraceID:       fmt.Sprintf("%v.%v", uu, ginfos.CallerFuncName(1)),
+						TraceID:       fmt.Sprintf("%v.%v", uu, ginfos.FuncName()),
 						CorrelationID: uu,
 						Topic:         TopicCoinOption,
 						ContentType:   gkafka.ContentTypeJSON,
@@ -181,7 +179,7 @@ func TestKafkaConsumerGroup(t *testing.T) {
 				if err := gkafka.PublishSyncMessage(syncProducer, TopicCoinOption, msg); err != nil {
 					logrus.Errorf("publish error|msg=%v, err:%v", msg, err)
 				} else {
-					logrus.Infof("publish ok|msg=%v", msg)
+					logrus.Infof("[producer]push ok|msg=%v", msg)
 				}
 			case <-ctx.Done():
 				logrus.Errorf("publish error")
@@ -256,6 +254,6 @@ func handleCoinOption(ctx context.Context, b []byte) (err error) {
 		return err
 	}
 
-	logrus.Infof("marshal msg:%v", msg)
+	logrus.Infof("[consumer]marshal ok:%v", msg)
 	return nil
 }

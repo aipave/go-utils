@@ -25,8 +25,8 @@ func WithLumLogger(lum *lumberjack.Logger) LogOption {
 	}
 }
 
-// WithAlerUrl
-func WithAlerUrl(url string) LogOption {
+// WithAlertUrl
+func WithAlertUrl(url string) LogOption {
 	return func(c *config) {
 		c.alertUrl = url
 	}

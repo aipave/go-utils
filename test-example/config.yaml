@@ -31,5 +31,8 @@ Mongo:
   PoolSize: your_connection_pool_size
   Timeout: your_timeout_duration
 
-Kafka: localhost:9092,localhost:9093
-#Kafka: localhost:9092
+#Kafka: localhost:9092,localhost:9093 #for bitname/kafka
+#Kafka: localhost:9092,localhost:9093 #for docker_compose_kafka_cluster.yaml
+Kafka: localhost:9092,localhost:9093,localhost:9094 #for docker_compose_kafka_cluster.yaml
+#Kafka: localhost:19092,localhost:19093,localhost:19094 #for docker_compose_kafka_cluster.yaml
+#Kafka: localhost:29092,localhost:39092,localhost:49092 #for cp/kafka

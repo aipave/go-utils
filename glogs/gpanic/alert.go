@@ -14,8 +14,6 @@ import (
 
 // https://open.feishu.cn/document/ukTMukTMukTM/uEjNwUjLxYDM14SM2ATN
 
-var gAlertUrl string = ""
-
 type card struct {
 	MsgType string `json:"msg_type"`
 	Card    struct {
@@ -33,10 +31,6 @@ type card struct {
 type Element struct {
 	Tag     string `json:"tag"`
 	Content string `json:"content"`
-}
-
-func SetAlertUrl(url string) {
-	gAlertUrl = url
 }
 
 func buildAlert(stack string) (c card) {
@@ -67,7 +61,7 @@ func buildAlert(stack string) (c card) {
 	return
 }
 
-func triggerAlert(card interface{}) {
+func (a *AlertMgr) triggerAlert(card interface{}) {
 	var currentIP = ginfos.Runtime.IP()
 	// todo: Some ip do not alarm
 	for _, devIP := range []string{"10.10.xx.xxx"} {
@@ -81,7 +75,7 @@ func triggerAlert(card interface{}) {
 	}
 
 	content, _ := json.Marshal(card)
-	resp, err := http.Post(gAlertUrl, "application/json", bytes.NewReader(content))
+	resp, err := http.Post(a.AlertUrl, "application/json", bytes.NewReader(content))
 	if err != nil {
 		logrus.Errorf("alert err:%v\n", err)
 		return
