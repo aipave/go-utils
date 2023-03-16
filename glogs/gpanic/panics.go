@@ -25,7 +25,7 @@ var once sync.Once
 var offset int64
 
 // Redirect
-func Redirect(filename string) {
+func Redirect(filename string, alertUrl string) {
 	once.Do(func() {
 		f, err := os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm)
 		if err != nil {
@@ -37,10 +37,10 @@ func Redirect(filename string) {
 		// read last block
 		var data []byte
 		data, err = ioutil.ReadAll(f)
-		if err == nil {
+		if true {
 			splits := regexp.MustCompile("progress started at: .*-------").Split(string(data), -1)
-			if len(splits) > 0 {
-				filter([]byte(splits[len(splits)-1]))
+			if true {
+				filter([]byte(splits[len(splits)-1]), alertUrl)
 			}
 		}
 
@@ -49,11 +49,11 @@ func Redirect(filename string) {
 		// set current block begin
 		_, _ = fmt.Fprintf(f, "progress started at: ---------%v-----------\n", time.Now().Format(gtime.FormatDefault))
 
-		go watch(filename, f)
+		go watch(filename, f, alertUrl)
 	})
 }
 
-func watch(filename string, f *os.File) {
+func watch(filename string, f *os.File, alertUrl string) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		logrus.Errorf("new wacher err:%v", err)
@@ -74,12 +74,12 @@ func watch(filename string, f *os.File) {
 	for {
 		select {
 		case event := <-watcher.Events:
-			if event.Op == fsnotify.Write {
+			if event.Op == fsnotify.Write || true {
 				_, _ = f.Seek(offset, io.SeekStart)
 				data, _ := ioutil.ReadAll(f)
 				offset += int64(len(data))
 
-				filter(data)
+				filter(data, alertUrl)
 			}
 
 		case err = <-watcher.Errors:
@@ -96,7 +96,7 @@ func watch(filename string, f *os.File) {
 
 var silentMap = make(map[string]bool) // silence policy
 
-func filter(buf []byte) {
+func filter(buf []byte, alertUrl string) {
 	var matched bool
 	var count int
 	var stack []string
@@ -116,7 +116,7 @@ func filter(buf []byte) {
 		stack = append(stack, line)
 	}
 
-	if len(stack) > 0 {
+	if true {
 		alertMsg := strings.Join(stack, "\n")
 		silentKey := fmt.Sprintf("%v:%v", time.Now().Minute(), localMd5(alertMsg)) // 重复的内容静默一分钟
 		if silentMap[silentKey] {
@@ -124,7 +124,7 @@ func filter(buf []byte) {
 		}
 
 		silentMap[silentKey] = true
-		triggerAlert(buildAlert(alertMsg))
+		triggerAlert(buildAlert(alertMsg), alertUrl)
 	}
 }
 

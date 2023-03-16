@@ -67,7 +67,7 @@ func buildAlert(stack string) (c card) {
 	return
 }
 
-func triggerAlert(card interface{}) {
+func triggerAlert(card interface{}, alertUrl string) {
 	var currentIP = ginfos.Runtime.IP()
 	// todo: Some ip do not alarm
 	for _, devIP := range []string{"10.10.xx.xxx"} {
@@ -81,7 +81,7 @@ func triggerAlert(card interface{}) {
 	}
 
 	content, _ := json.Marshal(card)
-	resp, err := http.Post(gAlertUrl, "application/json", bytes.NewReader(content))
+	resp, err := http.Post(alertUrl, "application/json", bytes.NewReader(content))
 	if err != nil {
 		logrus.Errorf("alert err:%v\n", err)
 		return
