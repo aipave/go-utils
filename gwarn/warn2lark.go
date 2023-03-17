@@ -48,7 +48,7 @@ func (m *Alarm) generateCardMsg(content string, level string) (c msgCard) {
 	if m.FontColor != "dafault" {
 		c.Card.Elements = append(c.Card.Elements, element{
 			Tag:     "markdown",
-			Content: fmt.Sprintf("<font color='%v'>%v</font>", m.FontColor, content),
+			Content: fmt.Sprintf("<font color='%v'>%v</font>", m.FontColor, body),
 		})
 	} else {
 		c.Card.Elements = append(c.Card.Elements, element{
