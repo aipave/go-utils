@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/Shopify/sarama v1.29.1
-	github.com/aipave/go-utils v0.0.58
+	github.com/aipave/go-utils v0.0.75
 	github.com/go-redis/redis/v8 v8.3.3
 	github.com/hashicorp/go-uuid v1.0.2
 	github.com/segmentio/kafka-go v0.4.39
