@@ -110,7 +110,7 @@ func IMGConvert(url string, layoutSuffix string) (bytes.Buffer, error) {
 	// Convert GIF image to JPEG format
 	var buffer bytes.Buffer
 	switch {
-	case strings.Contains(layoutSuffix, "jp"):
+	case strings.Contains(layoutSuffix, "jpg"):
 		err = jpeg.Encode(&buffer, gifImage.Image[0], nil)
 	case strings.Contains(layoutSuffix, "png"):
 		err = png.Encode(&buffer, gifImage.Image[0])
