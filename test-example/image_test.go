@@ -1,11 +1,14 @@
 package test_example
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"image/gif"
 	"image/jpeg"
+	"image/png"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"os/exec"
@@ -88,17 +91,124 @@ func IMGConvert01(url string, layoutSuffix string) error {
 	return gerr.New(0, fmt.Sprint(len(gifImage.Image)))
 }
 
-func IMGConvert(url string, layoutSuffix string) {
+func IMGConvert(url string, layoutSuffix string) (bytes.Buffer, error) {
+	if !strings.Contains(layoutSuffix, ".jpg") && !strings.Contains(layoutSuffix, ".jpeg") && !strings.Contains(layoutSuffix, ".png") {
+		return bytes.Buffer{}, gerr.New(0, "type error")
+	}
+	response, err := http.Get(url)
+	if err != nil {
+		return bytes.Buffer{}, gerr.New(0, "http get error")
+	}
+	defer response.Body.Close()
 
+	// Decode GIF image
+	gifImage, err := gif.DecodeAll(response.Body)
+	if err != nil {
+		return bytes.Buffer{}, gerr.New(0, "gif decode error")
+	}
+
+	// Convert GIF image to JPEG format
+	var buffer bytes.Buffer
+	switch {
+	case strings.Contains(layoutSuffix, "jp"):
+		err = jpeg.Encode(&buffer, gifImage.Image[0], nil)
+	case strings.Contains(layoutSuffix, "png"):
+		err = png.Encode(&buffer, gifImage.Image[0])
+	}
+	if err != nil {
+		return bytes.Buffer{}, gerr.New(0, "gif decode error")
+	}
+
+	return buffer, nil
+}
+
+func IMGPost(url string, imgLayout string, buffer bytes.Buffer) error {
+	// Upload PNG image to server
+	resp, err := http.Post("https://xxx", fmt.Sprintf("image/%v", imgLayout), &buffer)
+	if err != nil {
+	}
+	defer resp.Body.Close()
+
+	// Read response body
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+	}
+
+	fmt.Println(string(body))
+	return nil
+}
+
+func IMG2LocalFile(buffer bytes.Buffer, fileName string) {
+	// Upload the JPEG image
+	body := new(bytes.Buffer)
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile("file", fileName+".jpg")
+	if err != nil {
+	}
+	_, err = part.Write(buffer.Bytes())
+	if err != nil {
+	}
+	err = writer.Close()
+	if err != nil {
+	}
+
+}
+
+func IMGSave2Local(buffer bytes.Buffer, fileName string) {
+	// Write buffer to file
+	err := ioutil.WriteFile(fileName+".jpg", buffer.Bytes(), 0644)
+	if err != nil {
+	}
+
+	fmt.Println("File saved to local file system!")
+
+}
+
+func IMGDisplay(buffer bytes.Buffer) {
+	// cmd := exec.Command("/full/path/to/imgcat", imagePath)
+	cmd := exec.Command("imgcat")
+
+	// Set the buffer as the command's standard input
+	cmd.Stdin = &buffer
+
+	// Start the command and wait for it to finish
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
 }
 
 func TestImageGit2Jpg(t *testing.T) {
 	//url := "https://img.gif8.com/g8/imgs/20201118/fa38518556770ea51bfee5ec335db7ba.gif"
 	url := "https://qna.smzdm.com/201911/16/5dcf844ce3d705101.gif_fo742.jpg" // 52 frames
-	err := IMGConvert(url, ".png")
-	gwarn.AleterGetter("https://open.feishu.cn/open-apis/bot/v2/hook/2f1dc72c-8d2d-4641-bd95-31bbd6fcd2c7", "run error").Notice(
-		fmt.Sprintf("%v", err))
+	buffer, err := IMGConvert(url, ".png")
+	//ext := filepath.Ext(url)
+	//fileName := strings.TrimSuffix(filepath.Base(url), ext)
+	//IMG2LocalFile(buffer, fileName) //
+	//IMGSave2Local(buffer, fileName) //ok
+	IMGDisplay(buffer)
+
+	gwarn.AleterGetter("https://open.feishu.cn/open-apis/bot/v2/hook/***", "run error").Notice(
+		fmt.Sprintf("%v%v", buffer, err))
 	t.Log(err)
+
+}
+
+func TestUrl(t *testing.T) {
+	urlOri := fmt.Sprintf("%v/%v", "https://cdn-***", "*")
+	rspOri, err := http.Get(urlOri)
+	if err != nil {
+		logrus.Errorf("download fail|url=%v,err:%v", urlOri, err)
+	}
+	defer rspOri.Body.Close()
+	contentTp := rspOri.Header.Get("Content-Type")
+	switch {
+	case strings.HasPrefix(contentTp, "image/jpeg"), strings.HasPrefix(contentTp, "image/png"):
+		t.Log("xxxxxxxxxx", contentTp)
+		return
+	}
+
+	t.Log("oooooooooooo")
 
 }
 
@@ -130,6 +240,6 @@ func init() {
 		logrus.Errorf("unmarshal file err|%v", err)
 	}
 
-	glogrus.Init(glogrus.WithAlertUrl("https://open.feishu.cn/open-apis/bot/v2/hook/2f1dc72c-8d2d-4641-bd95-31bbd6fcd2c7"))
+	glogrus.Init(glogrus.WithAlertUrl("https://open.feishu.cn/open-apis/bot/v2/hook/*"))
 	glogrus.MustSetLevel(GetImagelogConfig().Log.Level)
 }
