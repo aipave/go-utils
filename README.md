@@ -24,6 +24,8 @@ common components
 - [ ] gemail test
 - [ ] ginfos test
 - [ ] gzip test
+- [ ] gimage test
+- [ ] gnum test
 
 ## Tips
 ### go mod
