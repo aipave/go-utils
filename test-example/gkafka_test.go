@@ -20,7 +20,6 @@ import (
 	"github.com/aipave/go-utils/ginfos"
 	"github.com/aipave/go-utils/gkafka"
 	"github.com/aipave/go-utils/glogs/glogrus"
-	"github.com/aipave/go-utils/glogs/gpanic"
 	"github.com/hashicorp/go-uuid"
 	"github.com/segmentio/kafka-go"
 	"github.com/sirupsen/logrus"
@@ -132,9 +131,8 @@ func init() {
 		logrus.Errorf("unmarshal file err|%v", err)
 	}
 
-	glogrus.Init()
+	glogrus.Init(glogrus.WithAlertUrl("https://open.feishu.cn/open-apis/bot/v2/hook/2f1dc72c-8d2d-4641-bd95-31bbd6fcd2c7"))
 	glogrus.MustSetLevel(GetKafkaConfig().Log.Level)
-	gpanic.SetAlertUrl("https://open.feishu.cn/open-apis/bot/v2/hook/2f1dc72c-8d2d-4641-bd95-31bbd6fcd2c7")
 }
 
 const (
