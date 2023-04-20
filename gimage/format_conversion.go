@@ -90,8 +90,6 @@ func PngToGif(path, filename string, delay int) error {
 	draw.Draw(palettedImg, palettedImg.Bounds(), img, image.Point{}, draw.Src)
 	outGif := &gif.GIF{}
 	outGif.Image = append(outGif.Image, palettedImg)
-	for i := 0; i < delay; i++ {
-	}
 	outGif.Delay = append(outGif.Delay, delay) // the delay parameter represents the delay between frames in hundredths of a second.
 	splitArr := strings.Split(filename, "/")
 	filenameRaw := splitArr[len(splitArr)-1]
@@ -99,7 +97,7 @@ func PngToGif(path, filename string, delay int) error {
 		strings.TrimSuffix(filenameRaw, filepath.Ext(filenameRaw))+".gif")
 	f, err := os.Create(createName)
 	if err != nil {
-		return gerr.New(0, createName)
+		return gerr.New(100, createName)
 	}
 	defer f.Close()
 	return gif.EncodeAll(f, outGif)

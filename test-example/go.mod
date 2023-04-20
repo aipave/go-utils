@@ -4,18 +4,22 @@ go 1.19
 
 require (
 	github.com/Shopify/sarama v1.38.1
-	github.com/aipave/go-utils v0.0.88
+	github.com/aipave/go-utils v0.0.89
+	github.com/disintegration/imaging v1.6.2
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/hashicorp/go-uuid v1.0.3
+	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/segmentio/kafka-go v0.4.39
 	github.com/sirupsen/logrus v1.9.0
 	go.mongodb.org/mongo-driver v1.11.4
+	golang.org/x/image v0.7.0
 	golang.org/x/net v0.9.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/gorm v1.25.0
 )
 
 require (
+	github.com/CuteReimu/neuquant v0.0.0-20230130033604-cd117bc74e3f // indirect
 	github.com/RussellLuo/timingwheel v0.0.0-20220218152713-54845bda3108 // indirect
 	github.com/antonfisher/nested-logrus-formatter v1.3.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -24,7 +28,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/disintegration/imaging v1.6.2 // indirect
 	github.com/eapache/go-resiliency v1.3.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20230111030713-bf00bc1b83b6 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
@@ -61,7 +64,6 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	gocv.io/x/gocv v0.32.1 // indirect
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
-	golang.org/x/image v0.7.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.7.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
